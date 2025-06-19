@@ -4,7 +4,7 @@
   "private": true,
   "engines": {
     "node": "18"
-  }
+  },
   "dependencies": {
     "@carbon/icons-react": "^10.16.0",
     "@carbon/themes": "^10.17.0",
