@@ -229,18 +229,28 @@ const formatDate = (dateStr) => {
   return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
 };
 
+// Normalize skill name for comparison (remove dashes, spaces, @ prefix)
+const normalizeForComparison = (name) => {
+  return name.toLowerCase().replace(/[-\s@]/g, '');
+};
+
 // Helper to get unique skills from user.skills and projects
 const getAllUniqueSkills = (user) => {
   const skillSet = new Set();
   const skills = [];
 
   const addSkill = (name) => {
-    // Remove parentheses content and split by / or +
-    const parts = name.replace(/\s*\([^)]*\)/g, '').split(/\s*[\/+]\s*/);
+    if (!name) return;
+    // Remove parentheses content and split by /, +, or ||
+    const cleaned = name
+      .replace(/\s*\([^)]*\)?/g, '')  // Remove (content) or (content
+      .replace(/[()]/g, '');           // Remove any remaining parentheses
+    const parts = cleaned.split(/\s*(?:[\/+]|\|\|)\s*/);
     parts.forEach(part => {
       const cleanName = part.trim();
-      if (cleanName && !skillSet.has(cleanName.toLowerCase())) {
-        skillSet.add(cleanName.toLowerCase());
+      const normalized = normalizeForComparison(cleanName);
+      if (cleanName && !skillSet.has(normalized)) {
+        skillSet.add(normalized);
         skills.push(cleanName);
       }
     });
@@ -277,9 +287,9 @@ const ResumePDF = ({ user }) => {
                   {user.basics.email}
                 </Link>
               )}
-              {user.basics.location && (
+              {user.basics?.location && (
                 <Text style={styles.contactItem}>
-                  {[user.basics.location.city, user.basics.location.region, user.basics.location.country].filter(Boolean).join(', ')}
+                  {[user.basics.location?.city, user.basics.location?.region, user.basics.location?.country].filter(Boolean).join(', ')}
                 </Text>
               )}
               {user.basics.profiles?.map((profile, i) => (

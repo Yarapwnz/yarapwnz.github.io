@@ -57,9 +57,11 @@ const UserHeader = ({ user }) => {
         <div>
           <h2>{user.basics.name}</h2>
           <p>{user.basics.label}</p>
-          <p>
-            Coding in {user.basics.location.city}, {user.basics.location.region}
-          </p>
+          {user.basics.location && (
+            <p>
+              Coding in {user.basics.location.city}, {user.basics.location.region}
+            </p>
+          )}
           <ExperienceSection>
             <ExperienceNumber>{yearsOfExperience}+</ExperienceNumber>
             <ExperienceText>years of<br />experience</ExperienceText>
