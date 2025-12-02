@@ -1,7 +1,7 @@
-import React from 'react';
-import Layout from '../../components/Layout';
-import { SectionTitle, Paragraph } from '../../styles';
-import { WorkItem, WorkTitle, JobTitle } from './styles';
+import React from "react";
+import Layout from "../../components/Layout";
+import { SectionTitle, Paragraph } from "../../styles";
+import { WorkItem, WorkTitle, JobTitle } from "./styles";
 
 const Work = ({ user }) => {
   return (
@@ -16,7 +16,8 @@ const Work = ({ user }) => {
                 <JobTitle>{work.company}</JobTitle> <span>{work.location}</span>
                 <span> &sdot; </span>
                 <span>
-                  {work.start.year} to {work.end.year}
+                  {work.start.year} to{" "}
+                  {work.end.year ? work.end.year : "Present"}
                 </span>
               </div>
               <Paragraph>{work.summary}</Paragraph>

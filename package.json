@@ -13,7 +13,7 @@
     "@testing-library/user-event": "^7.2.1",
     "carbon-components": "^10.18.0",
     "carbon-components-react": "^7.18.0",
-    "node-sass": "^4.14.1",
+    "sass": "^1.69.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",
@@ -21,8 +21,8 @@
     "styled-components": "^5.1.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "NODE_OPTIONS=--openssl-legacy-provider react-scripts start",
+    "build": "NODE_OPTIONS=--openssl-legacy-provider react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
