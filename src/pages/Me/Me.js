@@ -15,20 +15,20 @@ import {
 
 const skillCategories = [
   {
+    name: 'State Management',
+    icon: CloudApp,
+    color: '#8a3ffc',
+    bgColor: 'rgba(138, 63, 252, 0.15)',
+    textColor: '#be95ff',
+    keywords: ['Redux', 'React-Redux', 'Mobx', 'Zustand', 'Apollo']
+  },
+  {
     name: 'Frontend',
     icon: Application,
     color: '#0f62fe',
     bgColor: 'rgba(15, 98, 254, 0.15)',
     textColor: '#78a9ff',
     keywords: ['React', 'React-Native', 'NextJS', 'Expo', 'HTML', 'CSS', 'TypeScript', 'JavaScript', 'Material-UI', 'Ant Design', 'Bootstrap', 'Dripsy']
-  },
-  {
-    name: 'State Management',
-    icon: CloudApp,
-    color: '#8a3ffc',
-    bgColor: 'rgba(138, 63, 252, 0.15)',
-    textColor: '#be95ff',
-    keywords: ['Redux', 'Mobx', 'Zustand']
   },
   {
     name: 'Backend',
@@ -64,22 +64,30 @@ const skillCategories = [
   }
 ];
 
-const categorizeSkills = (skills) => {
+const categorizeSkills = (skills, projects = []) => {
   const categorized = skillCategories.map(category => ({
     ...category,
     skills: []
   }));
 
   const uncategorized = [];
+  const addedSkills = new Set();
 
-  skills.forEach(skill => {
-    const skillName = skill.name.toLowerCase();
+  // Helper function to categorize a single skill name
+  const addSingleSkill = (skillName) => {
+    // Remove parentheses content and trim
+    const cleanName = skillName.replace(/\s*\([^)]*\)/g, '').trim();
+    if (!cleanName) return;
+
+    const normalizedName = cleanName.toLowerCase();
+    if (addedSkills.has(normalizedName)) return;
+
     let found = false;
-
     for (const category of categorized) {
       for (const keyword of category.keywords) {
-        if (skillName.includes(keyword.toLowerCase())) {
-          category.skills.push(skill.name);
+        if (normalizedName.includes(keyword.toLowerCase())) {
+          category.skills.push(cleanName);
+          addedSkills.add(normalizedName);
           found = true;
           break;
         }
@@ -88,15 +96,31 @@ const categorizeSkills = (skills) => {
     }
 
     if (!found) {
-      uncategorized.push(skill.name);
+      uncategorized.push(cleanName);
+      addedSkills.add(normalizedName);
     }
+  };
+
+  // Helper to split combined skills like "Formik / Yup" or "Formik + Yup"
+  const addSkill = (skillName) => {
+    const parts = skillName.split(/\s*[\/+]\s*/);
+    parts.forEach(part => addSingleSkill(part));
+  };
+
+  // Add skills from user.skills
+  skills.forEach(skill => addSkill(skill.name));
+
+  // Extract unique technologies from projects
+  projects.forEach(project => {
+    const allTech = [...(project.languages || []), ...(project.libraries || [])];
+    allTech.forEach(tech => addSkill(tech));
   });
 
   return categorized.filter(cat => cat.skills.length > 0);
 };
 
 const Me = ({ user }) => {
-  const categorizedSkills = categorizeSkills(user.skills);
+  const categorizedSkills = categorizeSkills(user.skills, user.projects);
 
   return (
     <Layout user={user}>

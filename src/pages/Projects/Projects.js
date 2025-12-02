@@ -84,7 +84,8 @@ const googlePlayLinks = {
   'Huddex': 'https://play.google.com/store/apps/details?id=com.huddextech.hudder',
   'Novello': 'https://play.google.com/store/apps/details?id=com.novellohealthcare',
   'Good Life Sorted': 'https://play.google.com/store/apps/details?id=com.goodlifesorted',
-  'conexwest': 'https://play.google.com/store/apps/details?id=com.conexwest.production_resource'
+  'conexwest': 'https://play.google.com/store/apps/details?id=com.conexwest.production_resource',
+  'Multi': 'https://play.google.com/store/apps/details?id=net.treeum.minfin.currency'
 };
 
 const isAppStoreLink = (url) => url && url.includes('apple.com');
