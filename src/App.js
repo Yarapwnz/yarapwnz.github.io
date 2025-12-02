@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Pages from './pages';
+import LoadingSkeleton from './components/LoadingSkeleton';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -12,7 +13,7 @@ function App() {
   }, []);
 
   if (!user) {
-    return <div />;
+    return <LoadingSkeleton />;
   }
 
   return <Pages user={user} />;

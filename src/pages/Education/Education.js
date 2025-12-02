@@ -1,30 +1,29 @@
 import React from 'react';
 import Layout from '../../components/Layout';
-import { SectionTitle, Paragraph } from '../../styles';
-import { EducationItem, Institution, Degree } from './styles';
+import { SectionTitle } from '../../styles';
+import { Timeline, EducationItem, Institution, Degree, DateBadge, Description } from './styles';
 
 const Education = ({ user }) => {
   return (
     <Layout user={user}>
       <div>
         <SectionTitle>Education</SectionTitle>
-        <ul>
+        <Timeline>
           {user.education.map((education, i) => (
-            <EducationItem key={i}>
-              <Institution>{education.position}</Institution>
-              <div>
-                <Degree>
-                  {education.studyType}, {education.area}
-                </Degree>{' '}
-                <span> &sdot; </span>
-                <span>
-                  {education.start.year} to {education.end.year}
-                </span>
-              </div>
-              <Paragraph>{education.description.replace('\n\n', '\n')}</Paragraph>
+            <EducationItem key={i} $index={i}>
+              <DateBadge>
+                {education.start.year} — {education.end.year || 'Present'}
+              </DateBadge>
+              <Institution>{education.institution}</Institution>
+              <Degree>
+                {education.studyType}, {education.area}
+              </Degree>
+              {education.description && (
+                <Description>{education.description.replace('\n\n', '\n')}</Description>
+              )}
             </EducationItem>
           ))}
-        </ul>
+        </Timeline>
       </div>
     </Layout>
   );

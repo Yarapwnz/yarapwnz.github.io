@@ -1,29 +1,28 @@
 import React from "react";
 import Layout from "../../components/Layout";
-import { SectionTitle, Paragraph } from "../../styles";
-import { WorkItem, WorkTitle, JobTitle } from "./styles";
+import { SectionTitle } from "../../styles";
+import { Timeline, WorkItem, WorkTitle, JobTitle, Location, DateBadge, Summary } from "./styles";
 
 const Work = ({ user }) => {
   return (
     <Layout user={user}>
       <div>
-        <SectionTitle>Work</SectionTitle>
-        <ul>
+        <SectionTitle>Work Experience</SectionTitle>
+        <Timeline>
           {user.work.map((work, i) => (
-            <WorkItem key={i}>
+            <WorkItem key={i} $index={i}>
+              <DateBadge>
+                {work.start.year} — {work.end.year ? work.end.year : "Present"}
+              </DateBadge>
               <WorkTitle>{work.position}</WorkTitle>
               <div>
-                <JobTitle>{work.company}</JobTitle> <span>{work.location}</span>
-                <span> &sdot; </span>
-                <span>
-                  {work.start.year} to{" "}
-                  {work.end.year ? work.end.year : "Present"}
-                </span>
+                <JobTitle>{work.company}</JobTitle>
+                {work.location && <Location> · {work.location}</Location>}
               </div>
-              <Paragraph>{work.summary}</Paragraph>
+              <Summary>{work.summary}</Summary>
             </WorkItem>
           ))}
-        </ul>
+        </Timeline>
       </div>
     </Layout>
   );

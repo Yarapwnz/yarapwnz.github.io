@@ -1,6 +1,6 @@
 import React from 'react'
 import { useLocation } from 'react-router-dom'
-import { User, Code, Portfolio, Education } from '@carbon/icons-react'
+import { User, Code, Portfolio, Education, Email } from '@carbon/icons-react'
 
 import { Container, Spacer, NavWrapper, NavButton, NavLink } from './styles'
 
@@ -40,6 +40,14 @@ const MobileNav = () => {
             hasIconOnly
             renderIcon={(props) => <Education size={24} {...props} />}
             iconDescription="Education"
+            tooltipPosition="bottom"
+          />
+        </NavLink>
+        <NavLink to="/contact" $isActive={location.pathname === '/contact'}>
+          <NavButton
+            hasIconOnly
+            renderIcon={(props) => <Email size={24} {...props} />}
+            iconDescription="Contact"
             tooltipPosition="bottom"
           />
         </NavLink>
