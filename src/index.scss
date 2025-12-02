@@ -1,32 +1,47 @@
-@import '@carbon/themes/scss/themes';
-$carbon--theme: $carbon--theme--g100;
-@include carbon--theme();
+@use '@carbon/react' with (
+  $theme: (
+    background: #262626,
+    layer-01: #393939,
+    text-primary: #f4f4f4,
+    text-secondary: #c6c6c6,
+    text-inverse: #ffffff,
+    link-primary: #78a9ff,
+  )
+);
 
-@import 'carbon-components/scss/globals/scss/styles.scss';
+body {
+  background-color: #262626;
+  color: #f4f4f4;
+}
 
 a {
-  color: $text-04;
+  color: #78a9ff;
 }
 
-.bx--side-nav__navigation {
-  background-color: $ui-background;
+h1, h2, h3, h4, h5, h6, p, span, div {
+  color: #f4f4f4;
 }
 
-a.bx--side-nav__link--current,
-a.bx--side-nav__link--current > span.bx--side-nav__link-text {
-  background-color: $ui-01;
-  color: $text-04;
+.cds--side-nav,
+.cds--side-nav__navigation {
+  background-color: #000000 !important;
 }
 
-.bx--side-nav__item:not(.bx--side-nav__item--active)
-  > .bx--side-nav__link:hover {
-  background-color: $ui-01;
-  color: $text-04;
+a.cds--side-nav__link--current,
+a.cds--side-nav__link--current > span.cds--side-nav__link-text {
+  background-color: #262626 !important;
+  color: #f4f4f4 !important;
 }
 
-a.bx--side-nav__link > .bx--side-nav__link-text,
-.bx--side-nav__item:not(.bx--side-nav__item--active)
-  > .bx--side-nav__link:hover
+.cds--side-nav__item:not(.cds--side-nav__item--active)
+  > .cds--side-nav__link:hover {
+  background-color: #393939 !important;
+  color: #f4f4f4 !important;
+}
+
+a.cds--side-nav__link > .cds--side-nav__link-text,
+.cds--side-nav__item:not(.cds--side-nav__item--active)
+  > .cds--side-nav__link:hover
   > span {
-  color: $text-04;
+  color: #f4f4f4 !important;
 }
