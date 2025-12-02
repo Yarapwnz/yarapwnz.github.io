@@ -95,6 +95,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 6,
     borderLeft: `3px solid ${colors.primary}`,
+    breakInside: 'avoid',
   },
   experienceHeader: {
     flexDirection: 'row',
@@ -144,6 +145,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.cardBg,
     padding: 8,
     borderRadius: 6,
+    breakInside: 'avoid',
   },
   projectHeader: {
     flexDirection: 'row',
@@ -189,6 +191,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.cardBg,
     padding: 8,
     borderRadius: 6,
+    breakInside: 'avoid',
   },
   schoolName: {
     fontSize: 10,
@@ -226,8 +229,36 @@ const formatDate = (dateStr) => {
   return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
 };
 
+// Helper to get unique skills from user.skills and projects
+const getAllUniqueSkills = (user) => {
+  const skillSet = new Set();
+  const skills = [];
+
+  const addSkill = (name) => {
+    // Remove parentheses content and split by / or +
+    const parts = name.replace(/\s*\([^)]*\)/g, '').split(/\s*[\/+]\s*/);
+    parts.forEach(part => {
+      const cleanName = part.trim();
+      if (cleanName && !skillSet.has(cleanName.toLowerCase())) {
+        skillSet.add(cleanName.toLowerCase());
+        skills.push(cleanName);
+      }
+    });
+  };
+
+  // Add from user.skills
+  (user.skills || []).forEach(skill => addSkill(skill.name));
+
+  // Add from projects
+  (user.projects || []).forEach(project => {
+    [...(project.languages || []), ...(project.libraries || [])].forEach(addSkill);
+  });
+
+  return skills;
+};
+
 const ResumePDF = ({ user }) => {
-  const allSkills = user.skills || [];
+  const allSkills = getAllUniqueSkills(user);
 
   return (
     <Document>
@@ -271,34 +302,51 @@ const ResumePDF = ({ user }) => {
         {/* Experience */}
         {user.work && user.work.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Experience</Text>
-            {user.work.map((job, i) => (
-              <View key={i} style={styles.experienceItem}>
-                <View style={styles.experienceHeader}>
-                  <Text style={styles.companyName}>{job.name || job.company}</Text>
-                  <Text style={styles.dateRange}>
-                    {formatDate(job.startDate)} - {formatDate(job.endDate)}
-                  </Text>
-                </View>
-                <Text style={styles.jobTitle}>{job.position}</Text>
-                {job.highlights && job.highlights.length > 0 && (
-                  <View style={styles.highlights}>
-                    {job.highlights.map((h, j) => (
-                      <Text key={j} style={styles.highlight}>• {h}</Text>
-                    ))}
+            {user.work.map((job, i) => {
+              const jobContent = (
+                <>
+                  <View style={styles.experienceHeader}>
+                    <Text style={styles.companyName}>{job.name || job.company}</Text>
+                    <Text style={styles.dateRange}>
+                      {formatDate(job.startDate)} - {formatDate(job.endDate)}
+                    </Text>
                   </View>
-                )}
-              </View>
-            ))}
+                  <Text style={styles.jobTitle}>{job.position}</Text>
+                  {job.highlights && job.highlights.length > 0 && (
+                    <View style={styles.highlights}>
+                      {job.highlights.map((h, j) => (
+                        <Text key={j} style={styles.highlight}>• {h}</Text>
+                      ))}
+                    </View>
+                  )}
+                </>
+              );
+
+              if (i === 0) {
+                return (
+                  <View key={i} wrap={false}>
+                    <Text style={styles.sectionTitle}>Experience</Text>
+                    <View style={styles.experienceItem}>
+                      {jobContent}
+                    </View>
+                  </View>
+                );
+              }
+              return (
+                <View key={i} style={styles.experienceItem} wrap={false}>
+                  {jobContent}
+                </View>
+              );
+            })}
           </View>
         )}
 
         {/* Skills - All skills in one row */}
-        <View style={styles.section}>
+        <View style={styles.section} wrap={false}>
           <Text style={styles.sectionTitle}>Skills</Text>
           <View style={styles.skillsRow}>
             {allSkills.map((skill, i) => (
-              <Text key={i} style={styles.skillPill}>{skill.name}</Text>
+              <Text key={i} style={styles.skillPill}>{skill}</Text>
             ))}
           </View>
         </View>
@@ -306,51 +354,85 @@ const ResumePDF = ({ user }) => {
         {/* Projects - All with full tech stack */}
         {user.projects && user.projects.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Projects</Text>
-            {user.projects.map((project, i) => (
-              <View key={i} style={styles.projectItem}>
-                <View style={styles.projectHeader}>
-                  <Text style={styles.projectName}>{project.name}</Text>
-                  {project.summary && (
-                    <Text style={styles.projectCategory}>{project.summary}</Text>
-                  )}
-                </View>
-                {project.description && (
-                  <Text style={styles.projectDescription}>{project.description}</Text>
-                )}
-                {(project.languages || project.libraries) && (
-                  <View style={styles.projectTech}>
-                    {[...(project.languages || []), ...(project.libraries || [])].map((tech, j) => (
-                      <Text key={j} style={styles.techTag}>{tech}</Text>
-                    ))}
+            {user.projects.map((project, i) => {
+              const projectContent = (
+                <>
+                  <View style={styles.projectHeader}>
+                    <Text style={styles.projectName}>{project.name}</Text>
+                    {project.summary && (
+                      <Text style={styles.projectCategory}>{project.summary}</Text>
+                    )}
                   </View>
-                )}
-              </View>
-            ))}
+                  {project.description && (
+                    <Text style={styles.projectDescription}>{project.description}</Text>
+                  )}
+                  {(project.languages || project.libraries) && (
+                    <View style={styles.projectTech}>
+                      {[...(project.languages || []), ...(project.libraries || [])].map((tech, j) => (
+                        <Text key={j} style={styles.techTag}>{tech}</Text>
+                      ))}
+                    </View>
+                  )}
+                </>
+              );
+
+              if (i === 0) {
+                return (
+                  <View key={i} wrap={false}>
+                    <Text style={styles.sectionTitle}>Projects</Text>
+                    <View style={styles.projectItem}>
+                      {projectContent}
+                    </View>
+                  </View>
+                );
+              }
+              return (
+                <View key={i} style={styles.projectItem} wrap={false}>
+                  {projectContent}
+                </View>
+              );
+            })}
           </View>
         )}
 
         {/* Education - Full section */}
         {user.education && user.education.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Education</Text>
-            {user.education.map((edu, i) => (
-              <View key={i} style={styles.educationItem}>
-                <Text style={styles.schoolName}>{edu.institution}</Text>
-                <Text style={styles.degree}>
-                  {edu.studyType && `${edu.studyType}, `}{edu.area}
-                </Text>
-                <Text style={styles.eduDateRange}>
-                  {formatDate(edu.startDate)} - {formatDate(edu.endDate)}
-                </Text>
-              </View>
-            ))}
+            {user.education.map((edu, i) => {
+              const eduContent = (
+                <>
+                  <Text style={styles.schoolName}>{edu.institution}</Text>
+                  <Text style={styles.degree}>
+                    {edu.studyType && `${edu.studyType}, `}{edu.area}
+                  </Text>
+                  <Text style={styles.eduDateRange}>
+                    {formatDate(edu.startDate)} - {formatDate(edu.endDate)}
+                  </Text>
+                </>
+              );
+
+              if (i === 0) {
+                return (
+                  <View key={i} wrap={false}>
+                    <Text style={styles.sectionTitle}>Education</Text>
+                    <View style={styles.educationItem}>
+                      {eduContent}
+                    </View>
+                  </View>
+                );
+              }
+              return (
+                <View key={i} style={styles.educationItem} wrap={false}>
+                  {eduContent}
+                </View>
+              );
+            })}
           </View>
         )}
 
         {/* Languages - After Education */}
         {user.languages && user.languages.length > 0 && (
-          <View style={styles.section}>
+          <View style={styles.section} wrap={false}>
             <Text style={styles.sectionTitle}>Languages</Text>
             <View style={styles.languagesRow}>
               {user.languages.map((lang, i) => (
